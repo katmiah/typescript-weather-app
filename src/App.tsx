@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import "./App.css";
 
 interface Location {
   name: string;
@@ -39,9 +40,14 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  async function getWeatherForecast(): Promise<WeatherResponse> {
+  async function getWeatherByCoords(
+    lat: number,
+    lon: number,
+  ): Promise<WeatherResponse> {
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
     const response = await fetch(
-      "http://api.weatherapi.com/v1/forecast.json?key=60bb3afddbb347319a7133604260304&q=auto:ip&days=7",
+      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${lat},${lon}&days=7`,
     );
 
     if (!response.ok) {
@@ -50,10 +56,20 @@ function App() {
 
     return response.json();
   }
+
+  function getCurrentPosition(): Promise<GeolocationPosition> {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject);
+    });
+  }
+
   useEffect(() => {
     async function loadWeather() {
       try {
-        const data = await getWeatherForecast();
+        const position = await getCurrentPosition();
+        const { latitude, longitude } = position.coords;
+
+        const data = await getWeatherByCoords(latitude, longitude);
         setWeather(data);
       } catch (err) {
         setError("Could not load");
@@ -61,6 +77,7 @@ function App() {
         setLoading(false);
       }
     }
+
     loadWeather();
   }, []);
 
@@ -70,19 +87,24 @@ function App() {
 
   return (
     <div>
-      <h1>
+      <h1 className="header">
         {weather.location.name}, {weather.location.country}
       </h1>
-
-      {weather.forecast.forecastday.map((day) => (
-        <div key={day.date}>
-          <h2>{day.date}</h2>
-          <p>{day.day.condition.text}</p>
-          <p>Max: {day.day.maxtemp_c}°C</p>
-          <p>Min: {day.day.mintemp_c}°C</p>
-        </div>
-      ))}
+      <div className="weather-container">
+        {weather.forecast.forecastday.map((day) => (
+          <div key={day.date} className="weather-box">
+            <h2>{day.date}</h2>
+            <div className="icon-condition">
+              <img className="icon" src={day.day.condition.icon} alt="" />
+              <p className="condition">{day.day.condition.text}</p>
+            </div>
+            <p>High of {day.day.maxtemp_c}°C</p>
+            <p>Low of {day.day.mintemp_c}°C</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
+
 export default App;
