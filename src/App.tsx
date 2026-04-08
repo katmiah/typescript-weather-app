@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import SearchBar from "../src/assets/SearchBar.tsx";
 
 interface Location {
   name: string;
@@ -85,8 +86,37 @@ function App() {
   if (error) return <p>{error}</p>;
   if (!weather) return <p>No weather data</p>;
 
+  async function getWeatherByCity(city: string): Promise<WeatherResponse> {
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
+    const response = await fetch(
+      `https://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${city}&days=7`,
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch weather");
+    }
+
+    return response.json();
+  }
+
+  async function handleSearch(city: string) {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const data = await getWeatherByCity(city);
+      setWeather(data);
+    } catch (err) {
+      setError("Oops! Location not found.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div>
+      <SearchBar onSearch={handleSearch} />
       <h1 className="header">
         {weather.location.name}, {weather.location.country}
       </h1>
