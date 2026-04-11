@@ -1,3 +1,4 @@
+import "../App.css";
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 
@@ -14,21 +15,20 @@ const SearchBar = ({ onSearch }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <div className="search-bar">
+      <form onSubmit={handleSubmit}>
         <input
           type="text"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for a city..."
+          required
         />
-        <div>
-          <button type="submit">
-            <Search />
-          </button>
-        </div>
-      </div>
-    </form>
+        <button type="submit">
+          <Search />
+        </button>
+      </form>
+    </div>
   );
 };
 

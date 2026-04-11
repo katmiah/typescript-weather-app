@@ -58,7 +58,7 @@ function App() {
     return response.json();
   }
 
-  function getCurrentPosition(): Promise<GeolocationPosition> {
+  async function getCurrentPosition(): Promise<GeolocationPosition> {
     return new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition(resolve, reject);
     });
@@ -116,14 +116,20 @@ function App() {
 
   return (
     <div>
-      <SearchBar onSearch={handleSearch} />
       <h1 className="header">
         {weather.location.name}, {weather.location.country}
       </h1>
       <div className="weather-container">
         {weather.forecast.forecastday.map((day) => (
           <div key={day.date} className="weather-box">
-            <h2>{day.date}</h2>
+            <h2>
+              {" "}
+              {new Date(day.date).toLocaleDateString("en-GB", {
+                weekday: "long",
+                day: "numeric",
+                month: "short",
+              })}
+            </h2>
             <div className="icon-condition">
               <img className="icon" src={day.day.condition.icon} alt="" />
               <p className="condition">{day.day.condition.text}</p>
@@ -133,6 +139,7 @@ function App() {
           </div>
         ))}
       </div>
+      <SearchBar onSearch={handleSearch} />
     </div>
   );
 }
