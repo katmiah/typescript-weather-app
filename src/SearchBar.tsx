@@ -1,4 +1,4 @@
-import "../App.css";
+import "./App.css";
 import React, { useState } from "react";
 import { Search } from "lucide-react";
 
@@ -23,6 +23,7 @@ const SearchBar = ({ onSearch }: Props) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search for a city..."
           required
+          maxLength={50}
         />
         <button type="submit">
           <Search />

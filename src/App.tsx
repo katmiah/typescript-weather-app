@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import SearchBar from "../src/assets/SearchBar.tsx";
+import SearchBar from "./SearchBar.tsx";
 
 interface Location {
   name: string;
@@ -82,9 +82,9 @@ function App() {
     loadWeather();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
-  if (!weather) return <p>No weather data</p>;
+  if (loading) return <p className="loading">Loading...</p>;
+  if (error) return <p className="error">{error}</p>;
+  if (!weather) return <p className="no-data">No weather data</p>;
 
   async function getWeatherByCity(city: string): Promise<WeatherResponse> {
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
@@ -123,11 +123,10 @@ function App() {
         {weather.forecast.forecastday.map((day) => (
           <div key={day.date} className="weather-box">
             <h2>
-              {" "}
               {new Date(day.date).toLocaleDateString("en-GB", {
-                weekday: "long",
+                weekday: "short",
                 day: "numeric",
-                month: "short",
+                month: "long",
               })}
             </h2>
             <div className="icon-condition">

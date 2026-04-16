@@ -93,3 +93,17 @@ body {
   background: none;
   cursor: pointer;
 }
+.loading {
+  display: flex;
+  justify-content: center;
+}
+.error {
+  display: flex;
+  justify-content: center;
+  font-size: xx-large;
+}
+.no-data {
+  display: flex;
+  justify-content: center;
+  font-size: xx-large;
+}
